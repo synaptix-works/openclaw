@@ -25,6 +25,6 @@ jobs:
       - name: Install pinned dependencies
         run: pnpm install --frozen-lockfile
       - name: Check account quota
-        run: node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/agents/model-fallback.shared-free-quota.test.ts
+        run: node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/model-fallback.shared-free-quota.test.ts
       - name: Existing fallback regression
-        run: node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/agents/model-fallback.chain-stop.test.ts src/agents/model-fallback.shared-rate-limit.test.ts src/agents/model-fallback.shared-rate-limit.integration.test.ts
+        run: node scripts/run-vitest.mjs run --config test/vitest/vitest.agents-core.config.ts src/agents/model-fallback.chain-stop.test.ts src/agents/model-fallback.shared-rate-limit.test.ts src/agents/model-fallback.shared-rate-limit.integration.test.ts
