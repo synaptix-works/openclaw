@@ -74,6 +74,7 @@ import {
   type ModelFallbackDecisionParams,
 } from "./model-fallback-observation.js";
 import { prepareModelFallbackRateLimit } from "./model-fallback-rate-limit.js";
+import { isOpenRouterFreeAccountQuotaError } from "./model-fallback-shared-free-quota.js";
 import { takeStickyRateLimitFallback } from "./model-fallback-sticky.js";
 import {
   MODEL_FALLBACK_SKIPPED_CODE,
@@ -680,6 +681,13 @@ async function runWithModelFallbackInternal<T>(
     }
 
     if (isKnownFailover && normalized.reason === "tls_certificate") {
+      tlsFailedProviders.add(candidate.provider);
+    }
+    // A confirmed free-tier account quota applies to all models on the same
+    // OpenRouter credential. Do not invoke the next same-provider candidate;
+    // independent providers remain eligible under their own admission policy.
+    // Generic HTTP 429 / rate_limit is intentionally NOT sufficient evidence.
+    if (isOpenRouterFreeAccountQuotaError(candidate.provider, err)) {
       tlsFailedProviders.add(candidate.provider);
     }
     candidates = preferContextFitFallbackCandidates({
