@@ -1,0 +1,30 @@
+name: HAOMA free account quota fallback regression
+on:
+  pull_request:
+    paths:
+      - 'src/agents/model-fallback-*'
+      - '.github/workflows/haoma-free-quota-fallback.yml'
+  push:
+    branches: [feat/haoma-native-runtime]
+    paths:
+      - 'src/agents/model-fallback-*'
+      - '.github/workflows/haoma-free-quota-fallback.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused-fallback:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+      - name: Install pinned dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Check account quota
+        run: node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/agents/model-fallback.shared-free-quota.test.ts
+      - name: Existing fallback regression
+        run: node scripts/run-vitest.mjs run --config test/vitest/vitest.unit.config.ts src/agents/model-fallback.chain-stop.test.ts src/agents/model-fallback.shared-rate-limit.test.ts src/agents/model-fallback.shared-rate-limit.integration.test.ts
