@@ -1,0 +1,10 @@
+{
+  "id": "deep-research-evidence",
+  "name": "Deep Research Evidence",
+  "description": "Citation-tracked research pipeline: scoped multi-phase retrieval, append-only evidence/claim ledgers, claim-support verification, citation DOI/URL checking, and McKinsey-style HTML reports. Backed by the native `dr` Rust CLI (crates/dr).",
+  "version": "1.0.0",
+  "categories": ["research"],
+  "skills": ["./skills"],
+  "activation": { "onStartup": false },
+  "configSchema": { "type": "object", "additionalProperties": false }
+}
