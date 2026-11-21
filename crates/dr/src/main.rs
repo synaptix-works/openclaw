@@ -79,8 +79,9 @@ enum Cmd {
 enum RunCmd {
     /// Create run_manifest.json + empty artifact files
     Init {
+        /// Default: $DR_RESEARCH_DIR/<Topic>_Research_<YYYYMMDD>, else ~/Documents
         #[arg(long)]
-        out_dir: String,
+        out_dir: Option<String>,
         #[arg(long, default_value = "")]
         query: String,
         #[arg(long, default_value = "standard", value_parser = ["quick","standard","deep","ultradeep"])]
@@ -269,7 +270,10 @@ fn main() {
     let cli = Cli::parse();
     match cli.cmd {
         Cmd::Run { sub } => match sub {
-            RunCmd::Init { out_dir, query, mode } => citation::cmd_init_run(&out_dir, &query, &mode),
+            RunCmd::Init { out_dir, query, mode } => {
+                let out_dir = out_dir.unwrap_or_else(|| citation::default_out_dir(&query));
+                citation::cmd_init_run(&out_dir, &query, &mode)
+            }
         },
         Cmd::Source { sub } => match sub {
             SourceCmd::Register { dir, json } => citation::cmd_register_source(&dir, &json),

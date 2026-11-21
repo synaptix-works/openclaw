@@ -61,6 +61,40 @@ pub fn compute_source_id(canonical: &str) -> String {
     sha256_hex(canonical)[..16].to_string()
 }
 
+/// Default report dir: `$DR_RESEARCH_DIR/<Topic>_Research_<YYYYMMDD>`,
+/// else `~/Documents/<Topic>_Research_<YYYYMMDD>`. Point DR_RESEARCH_DIR at an
+/// Obsidian vault folder (e.g. a Drive-synced vault) to file research into it.
+pub fn default_out_dir(query: &str) -> String {
+    let base = std::env::var("DR_RESEARCH_DIR")
+        .ok()
+        .filter(|s| !s.trim().is_empty())
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| {
+            std::env::var_os("USERPROFILE")
+                .or_else(|| std::env::var_os("HOME"))
+                .map(std::path::PathBuf::from)
+                .unwrap_or_else(|| std::path::PathBuf::from("."))
+                .join("Documents")
+        });
+    let slug: String = query
+        .split_whitespace()
+        .take(8)
+        .collect::<Vec<_>>()
+        .join(" ")
+        .chars()
+        .map(|c| if c.is_alphanumeric() { c } else { '_' })
+        .collect::<String>()
+        .split('_')
+        .filter(|s| !s.is_empty())
+        .collect::<Vec<_>>()
+        .join("_");
+    let slug = if slug.is_empty() { "Research".to_string() } else { slug };
+    let date = utc_now_iso()[..10].replace('-', "");
+    base.join(format!("{slug}_Research_{date}"))
+        .to_string_lossy()
+        .to_string()
+}
+
 pub fn cmd_init_run(out_dir: &str, query: &str, mode: &str) {
     fs::create_dir_all(out_dir).ok();
     let dir = std::fs::canonicalize(out_dir).unwrap_or_else(|_| Path::new(out_dir).to_path_buf());

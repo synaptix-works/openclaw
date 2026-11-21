@@ -29,8 +29,8 @@
 ### Phase 8.1: Setup
 
 ```bash
-# Create folder: ~/Documents/[TopicName]_Research_[YYYYMMDD]/
-mkdir -p ~/Documents/[folder_name]
+# Output dir resolution: --out-dir flag > $DR_RESEARCH_DIR env > ~/Documents/
+# Set DR_RESEARCH_DIR to an Obsidian vault folder to file research into the vault.
 
 # Initialize markdown file with frontmatter
 # Path: [folder]/research_report_[YYYYMMDD]_[slug].md
@@ -107,7 +107,7 @@ Source identity is stable across edits and continuation. Display numbers are der
 ## File Organization
 
 **1. Create dedicated folder:**
-- Location: `~/Documents/[TopicName]_Research_[YYYYMMDD]/`
+- Location: `$DR_RESEARCH_DIR/[TopicName]_Research_[YYYYMMDD]/` (defaults to `~/Documents/` when unset)
 - Clean topic name (remove special chars, use underscores)
 
 **2. File naming convention:**
